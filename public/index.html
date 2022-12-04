@@ -1,0 +1,43 @@
+<html><head><title>Wysiwyg</title>
+<script src="https://cdn.ckeditor.com/4.20.1/standard/ckeditor.js"></script>
+</head>
+<body>
+<h1>Редактор на NodeJS+CKEditor4</h1>
+ <textarea id='editor1' name="editor1"></textarea>
+                <script>
+                        CKEDITOR.replace( 'editor1' );
+                </script>
+<input type='button' id='save' value='Сохранить'>
+
+<script>
+window.onload = function(){
+
+// load from local file to editor
+
+	fetch('/content.txt').then(function (response) {
+	// The API call was successful!
+	return response.text();
+}).then(function (data) {
+	// This is the JSON from our response
+	console.log(data);
+	CKEDITOR.instances.editor1.setData(data);
+}).catch(function (err) {
+	// There was an error
+	console.warn('Something went wrong.', err);
+});
+			
+// save file using ajax
+document.getElementById('save').onclick = function(){
+var v = CKEDITOR.instances.editor1.getData();
+var xhr = new XMLHttpRequest();
+xhr.open("POST", '/save_data', true);
+xhr.setRequestHeader('Content-Type', 'application/json');
+xhr.send(JSON.stringify({
+    html: v
+}));
+};
+
+};
+</script>
+</body>
+</html>
